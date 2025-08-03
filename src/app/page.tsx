@@ -14,6 +14,9 @@ const phrases = [
 export default function LandingPage() {
   const [step, setStep] = useState<"logo" | "text">("logo");
   const [phraseIndex, setPhraseIndex] = useState(0);
+  const [email, setEmail] = useState("");
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
   useEffect(() => {
     let timer: ReturnType<typeof setTimeout>;
@@ -35,6 +38,43 @@ export default function LandingPage() {
 
     return () => clearTimeout(timer);
   }, [step, phraseIndex]);
+
+  useEffect(() => {
+    if (error) {
+      const timeout = setTimeout(() => {
+        setError("");
+      }, 3000);
+      return () => clearTimeout(timeout);
+    }
+  }, [error]);
+
+  useEffect(() => {
+    if (success) {
+      const timeout = setTimeout(() => {
+        setSuccess("");
+      }, 3000);
+      return () => clearTimeout(timeout);
+    }
+  }, [success]);
+
+  const validateEmail = (email: string) => {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regex.test(email);
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email) {
+      setError("Te rugăm să introduci o adresă de email.");
+    } else if (!validateEmail(email)) {
+      setError("Adresă de email invalidă.");
+    } else {
+      setError("");
+      setSuccess("Te-ai abonat cu succes!");
+      console.log("Email trimis:", email);
+      setEmail("");
+    }
+  };
 
   return (
     <div className="relative flex flex-col h-screen w-full bg-[rgb(247,93,57)] overflow-hidden">
@@ -84,25 +124,64 @@ export default function LandingPage() {
       </main>
 
       {/* Footer fixat jos */}
-      <footer className="flex justify-center gap-12 p-4 fixed bottom-0 left-0 w-full bg-[rgb(247,93,57)] z-50">
-        <a
-          href="#"
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label="Instagram"
-          className="text-white text-3xl"
-        >
-          <FaInstagram />
-        </a>
-        <a
-          href="#"
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label="TikTok"
-          className="text-white text-3xl"
-        >
-          <FaTiktok />
-        </a>
+      <footer className="bg-[rgb(247,93,57)] text-white p-6 pt-10">
+        {/* Newsletter */}
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="text-2xl font-semibold mb-2">
+            Abonează-te la newsletter
+          </h2>
+          <p className="mb-4 text-sm">
+            Primește cele mai noi oferte și noutăți direct pe email
+          </p>
+          <form
+            onSubmit={handleSubmit}
+            className="flex flex-col sm:flex-row justify-center items-center gap-3"
+          >
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                setError("");
+              }}
+              placeholder="Introdu adresa ta de email"
+              className="p-2 py-2.5 rounded-md text-white bg-white/20 placeholder-white text-center w-64 outline-none"
+            />
+            <button
+              type="submit"
+              className="bg-white text-[rgb(247,93,57)] font-semibold px-4 py-2 rounded-md hover:bg-gray-200"
+            >
+              Abonează-te
+            </button>
+          </form>
+          {error && <p className="text-red-200 text-sm mt-2">{error}</p>}
+          {success && <p className="text-green-200 text-sm mt-2">{success}</p>}
+        </div>
+
+        {/* Social + Drepturi */}
+        <div className="mt-10 flex flex-col justify-center items-center gap-4 text-center">
+          <div className="flex gap-6 text-2xl">
+            <a
+              href="#"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Instagram"
+            >
+              <FaInstagram />
+            </a>
+            <a
+              href="#"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="TikTok"
+            >
+              <FaTiktok />
+            </a>
+          </div>
+          <p className="text-sm">
+            © {new Date().getFullYear()} Lionfly. Toate drepturile rezervate.
+          </p>
+        </div>
       </footer>
     </div>
   );
