@@ -31,3 +31,15 @@ body {
   background-size: cover;
   background-position: center;
 }
+
+body {
+  background-color: white;
+  color: #f7f0e8;
+}
+
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: #121212;
+    color: white;
+  }
+}

@@ -3,6 +3,8 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
 import { FaInstagram, FaTiktok } from "react-icons/fa";
+import HamburgerMenu from "./components/HamburgerMenu";
+import DarkModeToggle from "./components/DarkModeToggle";
 
 const phrases = [
   "Your vision",
@@ -17,10 +19,12 @@ export default function LandingPage() {
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [darkMode, setDarkMode] = useState(false);
+
+  const toggleDarkMode = () => setDarkMode((v) => !v);
 
   useEffect(() => {
     let timer: ReturnType<typeof setTimeout>;
-
     if (step === "logo") {
       timer = setTimeout(() => {
         setStep("text");
@@ -35,32 +39,25 @@ export default function LandingPage() {
         }
       }, 1500);
     }
-
     return () => clearTimeout(timer);
   }, [step, phraseIndex]);
 
   useEffect(() => {
     if (error) {
-      const timeout = setTimeout(() => {
-        setError("");
-      }, 3000);
+      const timeout = setTimeout(() => setError(""), 3000);
       return () => clearTimeout(timeout);
     }
   }, [error]);
 
   useEffect(() => {
     if (success) {
-      const timeout = setTimeout(() => {
-        setSuccess("");
-      }, 3000);
+      const timeout = setTimeout(() => setSuccess(""), 3000);
       return () => clearTimeout(timeout);
     }
   }, [success]);
 
-  const validateEmail = (email: string) => {
-    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return regex.test(email);
-  };
+  const validateEmail = (email: string) =>
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -77,7 +74,18 @@ export default function LandingPage() {
   };
 
   return (
-    <div className="relative flex flex-col h-screen w-full bg-[rgb(247,93,57)] overflow-hidden">
+    <div
+      className={`relative flex flex-col h-screen w-full overflow-hidden ${
+        darkMode ? "bg-black" : "bg-[rgb(247,93,57)]"
+      }`}
+    >
+      {/* Header */}
+      <header className="fixed top-6 right-6 z-50 flex items-center gap-4 md:hidden">
+        <HamburgerMenu darkMode={darkMode} />
+        <DarkModeToggle darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
+      </header>
+
+      {/* Main animation */}
       <main className="flex-grow flex flex-col items-center justify-center pt-16 -translate-y-8 space-y-4 relative">
         <AnimatePresence mode="wait">
           {step === "logo" && (
@@ -97,7 +105,6 @@ export default function LandingPage() {
               key="logo"
             />
           )}
-
           {step === "text" && (
             <motion.h1
               key={phrases[phraseIndex]}
@@ -123,9 +130,12 @@ export default function LandingPage() {
         </AnimatePresence>
       </main>
 
-      {/* Footer fixat jos */}
-      <footer className="bg-[rgb(247,93,57)] text-white p-6 pt-10">
-        {/* Newsletter */}
+      {/* Footer */}
+      <footer
+        className={`p-6 pt-10 ${
+          darkMode ? "bg-black text-gray-200" : "bg-[rgb(247,93,57)] text-white"
+        }`}
+      >
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-2xl font-semibold mb-2">
             Abonează-te la newsletter
@@ -145,20 +155,48 @@ export default function LandingPage() {
                 setError("");
               }}
               placeholder="Introdu adresa ta de email"
-              className="p-2 py-2.5 rounded-md text-white bg-white/20 placeholder-white text-center w-64 outline-none"
+              className={`p-2 py-2.5 rounded-md text-center outline-none w-64 placeholder-opacity-70 border transition-all duration-300
+    ${
+      darkMode
+        ? "bg-white/5 text-gray-200 placeholder-gray-400 border-gray-500 focus:border-gray-300 focus:bg-white/10"
+        : "bg-white/20 text-white placeholder-white border-white/40 focus:border-white"
+    }
+  `}
             />
+
             <button
               type="submit"
-              className="bg-white text-[rgb(247,93,57)] font-semibold px-4 py-2 rounded-md hover:bg-gray-200"
+              className={`font-semibold px-4 py-2 rounded-md hover:bg-gray-200 transition-colors duration-300
+                ${
+                  darkMode
+                    ? "bg-[rgb(247,93,57)] text-white hover:bg-[rgb(220,70,40)]"
+                    : "bg-white text-[rgb(247,93,57)]"
+                }
+              `}
             >
               Abonează-te
             </button>
           </form>
-          {error && <p className="text-red-200 text-sm mt-2">{error}</p>}
-          {success && <p className="text-green-200 text-sm mt-2">{success}</p>}
+          {error && (
+            <p
+              className={`${
+                darkMode ? "text-red-400" : "text-white"
+              } text-sm mt-2`}
+            >
+              {error}
+            </p>
+          )}
+          {success && (
+            <p
+              className={`${
+                darkMode ? "text-green-400" : "text-white"
+              } text-sm mt-2`}
+            >
+              {success}
+            </p>
+          )}
         </div>
 
-        {/* Social + Drepturi */}
         <div className="mt-10 flex flex-col justify-center items-center gap-4 text-center">
           <div className="flex gap-6 text-2xl">
             <a
@@ -166,6 +204,11 @@ export default function LandingPage() {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Instagram"
+              className={
+                darkMode
+                  ? "text-gray-200 hover:text-gray-400"
+                  : "hover:text-gray-200"
+              }
             >
               <FaInstagram />
             </a>
@@ -174,6 +217,11 @@ export default function LandingPage() {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="TikTok"
+              className={
+                darkMode
+                  ? "text-gray-200 hover:text-gray-400"
+                  : "hover:text-gray-200"
+              }
             >
               <FaTiktok />
             </a>
