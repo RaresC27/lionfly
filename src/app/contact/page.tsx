@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { FaInstagram, FaTiktok, FaMoon, FaSun } from "react-icons/fa";
+import { FaInstagram, FaTiktok } from "react-icons/fa";
 
 export default function ContactPage() {
   const [name, setName] = useState("");
@@ -12,21 +12,8 @@ export default function ContactPage() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [darkMode, setDarkMode] = useState(false);
 
   const toggleMenu = () => setIsMenuOpen((v) => !v);
-  const toggleDarkMode = () => setDarkMode((v) => !v);
-
-  useEffect(() => {
-    const savedDarkMode = localStorage.getItem("darkMode");
-    if (savedDarkMode !== null) {
-      setDarkMode(savedDarkMode === "true");
-    }
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem("darkMode", darkMode.toString());
-  }, [darkMode]);
 
   const validateEmail = (email: string) =>
     /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -63,11 +50,7 @@ export default function ContactPage() {
   };
 
   return (
-    <div
-      className={`relative flex flex-col min-h-screen w-full overflow-hidden ${
-        darkMode ? "bg-black text-gray-200" : "bg-[rgb(247,93,57)] text-white"
-      }`}
-    >
+    <div className="relative flex flex-col min-h-screen w-full overflow-hidden bg-[rgb(247,93,57)] text-white">
       {/* HEADER */}
       <header className="fixed top-6 right-6 z-50 flex items-center gap-4 md:hidden">
         {/* Burger menu */}
@@ -92,19 +75,6 @@ export default function ContactPage() {
             }`}
           />
         </button>
-
-        {/* Dark mode toggle */}
-        <button
-          onClick={toggleDarkMode}
-          className={`w-8 h-8 rounded-full flex items-center justify-center transition ${
-            darkMode
-              ? "bg-gray-200 text-gray-900"
-              : "bg-white text-[rgb(247,93,57)]"
-          }`}
-          aria-label="Toggle dark mode"
-        >
-          {darkMode ? <FaSun /> : <FaMoon />}
-        </button>
       </header>
 
       {/* MENIU */}
@@ -115,11 +85,7 @@ export default function ContactPage() {
             animate={{ y: 0 }}
             exit={{ y: "-100%" }}
             transition={{ type: "spring", stiffness: 260, damping: 30 }}
-            className={`fixed top-0 left-0 w-full h-full flex flex-col justify-center items-center gap-10 z-40 ${
-              darkMode
-                ? "bg-black text-gray-200"
-                : "bg-[rgb(247,93,57)] text-white"
-            }`}
+            className="fixed top-0 left-0 w-full h-full flex flex-col justify-center items-center gap-10 z-40 bg-[rgb(247,93,57)] text-white"
           >
             {["Acasa", "Despre noi", "Portofoliu", "Contact"].map((item) => {
               const href =
@@ -135,14 +101,6 @@ export default function ContactPage() {
                 </Link>
               );
             })}
-
-            <button
-              onClick={toggleMenu}
-              aria-label="Close menu"
-              className="absolute top-6 right-6 text-3xl font-bold"
-            >
-              ×
-            </button>
           </motion.nav>
         )}
       </AnimatePresence>
@@ -152,14 +110,9 @@ export default function ContactPage() {
         aria-label="Breadcrumb"
         className="p-6 pt-24 max-w-4xl mx-auto text-m font-medium"
       >
-        <ol className="flex text-gray-300 space-x-2">
+        <ol className="flex text-gray-200 space-x-2">
           <li>
-            <Link
-              href="/"
-              className={`hover:underline ${
-                darkMode ? "text-gray-400" : "text-white"
-              }`}
-            >
+            <Link href="/" className="hover:underline text-white">
               Acasa
             </Link>
           </li>
@@ -185,7 +138,6 @@ export default function ContactPage() {
           onSubmit={handleSubmit}
           className="flex flex-col gap-5 w-full max-w-lg"
         >
-          {/* Input nume */}
           <input
             type="text"
             placeholder="Numele tău"
@@ -195,14 +147,9 @@ export default function ContactPage() {
               setError("");
               setSuccess("");
             }}
-            className={`p-2 py-2.5 rounded-md text-center outline-none w-full placeholder-opacity-70 border transition-all duration-300 ${
-              darkMode
-                ? "bg-white/5 text-gray-200 placeholder-gray-400 border-gray-600 focus:border-gray-300 focus:bg-white/10"
-                : "bg-white/20 text-white placeholder-white border-white/40 focus:border-white"
-            }`}
+            className="p-2 py-2.5 rounded-md text-center outline-none w-full placeholder-opacity-70 border transition-all duration-300 bg-white/20 text-white placeholder-white border-white/40 focus:border-white"
           />
 
-          {/* Input email */}
           <input
             type="email"
             placeholder="Adresa ta de email"
@@ -212,14 +159,9 @@ export default function ContactPage() {
               setError("");
               setSuccess("");
             }}
-            className={`p-2 py-2.5 rounded-md text-center outline-none w-full placeholder-opacity-70 border transition-all duration-300 ${
-              darkMode
-                ? "bg-white/5 text-gray-200 placeholder-gray-400 border-gray-600 focus:border-gray-300 focus:bg-white/10"
-                : "bg-white/20 text-white placeholder-white border-white/40 focus:border-white"
-            }`}
+            className="p-2 py-2.5 rounded-md text-center outline-none w-full placeholder-opacity-70 border transition-all duration-300 bg-white/20 text-white placeholder-white border-white/40 focus:border-white"
           />
 
-          {/* Textarea */}
           <textarea
             placeholder="Mesajul tău"
             value={message}
@@ -229,53 +171,28 @@ export default function ContactPage() {
               setSuccess("");
             }}
             rows={6}
-            className={`p-2 py-2.5 rounded-md text-center outline-none w-full resize-none placeholder-opacity-70 border transition-all duration-300 ${
-              darkMode
-                ? "bg-white/5 text-gray-200 placeholder-gray-400 border-gray-600 focus:border-gray-300 focus:bg-white/10"
-                : "bg-white/20 text-white placeholder-white border-white/40 focus:border-white"
-            }`}
+            className="p-2 py-2.5 rounded-md text-center outline-none w-full resize-none placeholder-opacity-70 border transition-all duration-300 bg-white/20 text-white placeholder-white border-white/40 focus:border-white"
           />
 
-          {/* Buton */}
           <button
             type="submit"
-            className={`font-semibold px-6 py-3 rounded-md transition-colors duration-300 ${
-              darkMode
-                ? "bg-[rgb(247,93,57)] text-white hover:bg-[rgb(255,120,80)]"
-                : "bg-white text-[rgb(247,93,57)] hover:bg-gray-200"
-            }`}
+            className="font-semibold px-6 py-3 rounded-md transition-colors duration-300 bg-white text-[rgb(247,93,57)] hover:bg-gray-200"
           >
             Trimite
           </button>
         </form>
 
-        {/* Mesaje */}
         {error && (
-          <p
-            className={`${
-              darkMode ? "text-red-400" : "text-white"
-            } text-sm mt-4 text-center`}
-          >
-            {error}
-          </p>
+          <p className="text-white text-sm mt-4 text-center">{error}</p>
         )}
         {success && (
-          <p
-            className={`${
-              darkMode ? "text-green-400" : "text-white"
-            } text-sm mt-4 text-center`}
-          >
-            {success}
-          </p>
+          <p className="text-white text-sm mt-4 text-center">{success}</p>
         )}
 
-        {/* Contact info */}
         <div className="mt-10 text-center text-l font-medium space-x-3">
           <a
             href="mailto:contact@lionfly.ro"
-            className={`hover:underline ${
-              darkMode ? "text-gray-300" : "text-white"
-            }`}
+            className="hover:underline text-white"
           >
             contact@lionfly.ro
           </a>
@@ -284,9 +201,7 @@ export default function ContactPage() {
             href="https://wa.me/40722340899"
             target="_blank"
             rel="noopener noreferrer"
-            className={`hover:underline ${
-              darkMode ? "text-gray-300" : "text-white"
-            }`}
+            className="hover:underline text-white"
           >
             0722 340 899
           </a>
@@ -294,11 +209,7 @@ export default function ContactPage() {
       </main>
 
       {/* FOOTER */}
-      <footer
-        className={`p-6 pt-10 mt-16 ${
-          darkMode ? "bg-black text-gray-200" : "bg-[rgb(247,93,57)] text-white"
-        }`}
-      >
+      <footer className="p-6 pt-10 mt-16 bg-[rgb(247,93,57)] text-white">
         <div className="max-w-4xl mx-auto text-center">
           <div className="flex gap-6 text-2xl justify-center mb-4">
             <a
@@ -306,7 +217,7 @@ export default function ContactPage() {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Instagram"
-              className={darkMode ? "hover:text-gray-400" : "hover:text-white"}
+              className="hover:text-white"
             >
               <FaInstagram />
             </a>
@@ -315,7 +226,7 @@ export default function ContactPage() {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="TikTok"
-              className={darkMode ? "hover:text-gray-400" : "hover:text-white"}
+              className="hover:text-white"
             >
               <FaTiktok />
             </a>
