@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { FaInstagram, FaTiktok } from "react-icons/fa";
+import HamburgerMenu from "../components/HamburgerMenu";
 
 export default function ContactPage() {
   const [name, setName] = useState("");
@@ -11,14 +12,12 @@ export default function ContactPage() {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-  const toggleMenu = () => setIsMenuOpen((v) => !v);
+  const [loading, setLoading] = useState(false);
 
   const validateEmail = (email: string) =>
     /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!name.trim()) {
@@ -42,68 +41,43 @@ export default function ContactPage() {
       return;
     }
 
+    setLoading(true);
     setError("");
-    setSuccess("Mesajul a fost trimis cu succes!");
-    setName("");
-    setEmail("");
-    setMessage("");
+    setSuccess("");
+
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, message }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        setSuccess(data.message);
+        setName("");
+        setEmail("");
+        setMessage("");
+
+        // Mesajul dispare după 3 secunde
+        setTimeout(() => setSuccess(""), 3000);
+      } else {
+        setError(data.error || "A apărut o eroare.");
+      }
+    } catch {
+      setError("Eroare de conexiune.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="relative flex flex-col min-h-screen w-full overflow-hidden bg-[rgb(247,93,57)] text-white">
       {/* HEADER */}
       <header className="fixed top-6 right-6 z-50 flex items-center gap-4 md:hidden">
-        {/* Burger menu */}
-        <button
-          onClick={toggleMenu}
-          aria-label="Toggle menu"
-          className="flex flex-col justify-between w-8 h-6 focus:outline-none"
-        >
-          <span
-            className={`block h-1 rounded bg-white transition-all duration-300 ${
-              isMenuOpen ? "rotate-45 translate-y-2 w-8" : "w-8"
-            }`}
-          />
-          <span
-            className={`block h-1 rounded bg-white transition-all duration-300 ${
-              isMenuOpen ? "opacity-0 w-5" : "w-5"
-            }`}
-          />
-          <span
-            className={`block h-1 rounded bg-white transition-all duration-300 ${
-              isMenuOpen ? "-rotate-45 -translate-y-2 w-8" : "w-4"
-            }`}
-          />
-        </button>
+        <HamburgerMenu />
       </header>
-
-      {/* MENIU */}
-      <AnimatePresence>
-        {isMenuOpen && (
-          <motion.nav
-            initial={{ y: "-100%" }}
-            animate={{ y: 0 }}
-            exit={{ y: "-100%" }}
-            transition={{ type: "spring", stiffness: 260, damping: 30 }}
-            className="fixed top-0 left-0 w-full h-full flex flex-col justify-center items-center gap-10 z-40 bg-[rgb(247,93,57)] text-white"
-          >
-            {["Acasa", "Despre noi", "Portofoliu", "Contact"].map((item) => {
-              const href =
-                item === "Acasa" ? "/" : item === "Contact" ? "/contact" : "#";
-              return (
-                <Link
-                  key={item}
-                  href={href}
-                  onClick={() => setIsMenuOpen(false)}
-                  className="text-3xl font-semibold hover:underline"
-                >
-                  {item}
-                </Link>
-              );
-            })}
-          </motion.nav>
-        )}
-      </AnimatePresence>
 
       {/* BREADCRUMB */}
       <nav
@@ -136,7 +110,7 @@ export default function ContactPage() {
 
         <form
           onSubmit={handleSubmit}
-          className="flex flex-col gap-5 w-full max-w-lg"
+          className="flex flex-col gap-5 w-full max-w-lg relative"
         >
           <input
             type="text"
@@ -176,9 +150,13 @@ export default function ContactPage() {
 
           <button
             type="submit"
-            className="font-semibold px-6 py-3 rounded-md transition-colors duration-300 bg-white text-[rgb(247,93,57)] hover:bg-gray-200"
+            disabled={loading}
+            className="font-semibold px-6 py-3 rounded-md transition-colors duration-300 bg-white text-[rgb(247,93,57)] hover:bg-gray-200 flex justify-center items-center gap-2"
           >
-            Trimite
+            {loading && (
+              <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+            )}
+            {loading ? "Se trimite..." : "Trimite"}
           </button>
         </form>
 

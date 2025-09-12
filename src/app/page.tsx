@@ -93,8 +93,31 @@ export default function LandingPage() {
         <HamburgerMenu />
       </header>
 
-      {/* Main animation */}
       <main className="flex-grow flex flex-col items-center justify-center pt-16 -translate-y-8 space-y-4 relative">
+        {/* Background grid doar în jurul textului */}
+        <div
+          className="absolute inset-0 flex items-center justify-center"
+          style={{
+            backgroundImage: `
+        linear-gradient(to right, rgba(255,255,255,0.2) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255,255,255,0.2) 1px, transparent 1px)
+      `,
+            backgroundSize: "40px 40px",
+            WebkitMaskImage:
+              "radial-gradient(circle at center, rgba(0,0,0,1) 40%, rgba(0,0,0,0) 70%)",
+            WebkitMaskRepeat: "no-repeat",
+            WebkitMaskPosition: "center",
+            WebkitMaskSize: "80% 80%",
+            maskImage:
+              "radial-gradient(circle at center, rgba(0,0,0,1) 40%, rgba(0,0,0,0) 70%)",
+            maskRepeat: "no-repeat",
+            maskPosition: "center",
+            maskSize: "80% 80%",
+            pointerEvents: "none",
+            zIndex: 0,
+          }}
+        ></div>
+
         <AnimatePresence mode="wait">
           {step === "logo" && (
             <motion.img
@@ -110,14 +133,14 @@ export default function LandingPage() {
                 rotate: { duration: 2.5, ease: "easeInOut" },
                 scale: { duration: 0.8 },
               }}
-              className="w-64 h-64"
+              className="w-64 h-64 relative z-10"
             />
           )}
 
           {step === "text" && (
             <motion.h1
               key={phrases[phraseIndex]}
-              className="text-6xl font-extrabold text-center"
+              className="text-6xl font-extrabold text-center relative z-10"
               style={{ color: "#f7f0e8", lineHeight: "1.2" }}
               initial={{ scale: 0.9, opacity: 0, y: 20 }}
               animate={{ scale: 1.1, opacity: 1, y: 0 }}
