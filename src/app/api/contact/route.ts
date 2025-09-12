@@ -26,8 +26,8 @@ export async function POST(req: Request) {
     });
 
     await transporter.sendMail({
-      from: `"Lionfly" <${process.env.SMTP_USER}>`,
-      to: "rares.crainic27@gmail.com",
+      from: `"Lionfly" <rares.crainic@gmail.com>`,
+      to: "rares.crainic@gmail.com",
       subject: `Mesaj de la ${name} | LIONFLY`,
       text: message,
       html: `<p><strong>Nume:</strong> ${name}</p>

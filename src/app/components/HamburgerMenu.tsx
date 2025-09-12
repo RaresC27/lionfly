@@ -44,7 +44,13 @@ export default function HamburgerMenu() {
           >
             {menuItems.map((item) => {
               const href =
-                item === "Acasa" ? "/" : item === "Contact" ? "/contact" : "#";
+                item === "Acasa"
+                  ? "/"
+                  : item === "Contact"
+                  ? "/contact"
+                  : item === "Despre noi"
+                  ? "/about"
+                  : "#";
               return (
                 <Link
                   key={item}
