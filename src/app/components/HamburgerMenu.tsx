@@ -50,6 +50,8 @@ export default function HamburgerMenu() {
                   ? "/contact"
                   : item === "Despre noi"
                   ? "/about"
+                  : item === "Portofoliu"
+                  ? "/portofoliu"
                   : "#";
               return (
                 <Link
